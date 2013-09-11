@@ -1,0 +1,11 @@
+{
+  "name": "conglomerate",
+  "version": "0.1.0",
+  "description": "Sample application that does 'stuff' for an AMQP workshop",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Glen Mailer <glenjamin@gmail.com>",
+  "license": "MIT"
+}
