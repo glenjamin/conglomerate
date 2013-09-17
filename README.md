@@ -7,7 +7,7 @@ A server to simulate a fictional company with a bunch of things going on.
 ### A job queue of markdown docs to convert to HTML
 
 Exchange: jobs
-Queue: document.ready
+Queue: documents.ready
 Format:
 ```
 {

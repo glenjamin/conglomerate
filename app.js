@@ -61,18 +61,20 @@ async.auto({
     var log = setup.log.child({ type: 'amqp' });
     // TODO, wrap up into single function w/ callback
     var amqp = require('amqp');
-    var conn = amqp.createConnection({ url: getConfigValue('amqp-url') });
-    conn.on('error', function(err) {
-      return next(err);
-    })
-    conn.on('close', function() {
-      return next(new Error('Connection closed'));
-    })
+    var url = getConfigValue('amqp-url');
+    log.debug("Connecting to %s", url);
+    var conn = amqp.createConnection({ url: url });
+    conn.on('error', connectionFailed)
     conn.on('ready', function() {
       log.info("AMQP connected");
+      conn.removeListener('error', connectionFailed);
       setup.amqpLogger.setConnection(conn);
       next(null, conn);
     });
+    function connectionFailed(err) {
+      log.warn(err, "Failed to connect to %s", url);
+      return next(err);
+    }
   }],
 
   'level': ['log', function(next, setup) {
@@ -93,6 +95,12 @@ async.auto({
     next(null, new Conglomerate(log, setup.express, setup.amqp, setup.level));
   }],
 
+  'things': ['conglomerate', function(next, setup) {
+    var con = setup.conglomerate;
+    var things = ['jobs'];
+    async.forEach(things, con.addThing.bind(con), next);
+  }]
+
 }, function(err, setup) {
 
   if (err) {
@@ -105,5 +113,11 @@ async.auto({
   }
 
   setup.conglomerate.run();
+
+  setup.amqp.on('error', function(err) {
+    setup.log.error(err, "AMQP connection error");
+    setup.log.warn("Shutting down");
+    setTimeout(process.exit.bind(process, 1), 100);
+  })
 
 })
