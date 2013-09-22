@@ -2,6 +2,8 @@ var async = require('async');
 var util = require('util');
 var url = require('url');
 
+//var agent = require('webkit-devtools-agent');
+
 function getConfigValue(key) {
   key = key.replace('-', '_').toUpperCase();
   var value = process.env[key];
@@ -31,7 +33,7 @@ async.auto({
       name: "conglomerate",
       streams: [
         {level: 'debug', stream: process.stdout},
-        {level: 'trace', type: 'raw', stream: setup.amqpLogger}
+        /*{level: 'trace', type: 'raw', stream: setup.amqpLogger}*/
       ],
       serializers : bunyan.stdSerializers
     });
@@ -68,7 +70,7 @@ async.auto({
     }
   }],
 
-  'amqp': ['amqpLogger', 'log', function(next, setup) {
+  /*'amqp': ['amqpLogger', 'log', function(next, setup) {
     var log = setup.log.child({ type: 'amqp' });
     // TODO, wrap up into single function w/ callback
     var amqp = require('amqp');
@@ -110,7 +112,7 @@ async.auto({
     var con = setup.conglomerate;
     var things = ['jobs'];
     async.forEach(things, con.addThing.bind(con), next);
-  }]
+  }]*/
 
 }, function(err, setup) {
 
@@ -122,12 +124,12 @@ async.auto({
     process.exit(1);
   }
 
-  setup.conglomerate.run();
+  /*setup.conglomerate.run();
 
   setup.amqp.on('error', function(err) {
     setup.log.error(err, "AMQP connection error");
     setup.log.warn("Shutting down");
     setTimeout(process.exit.bind(process, 1), 100);
-  })
+  })*/
 
 })

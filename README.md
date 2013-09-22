@@ -19,7 +19,8 @@ Format:
 The provided markdown should be converted to HTML, and sent back to the url
 provided via HTTP POST.
 
-The results of recently completed jobs can be see at `/jobs`
+You can manually add a job and see those recently completed at `/jobs`.
+
 
 ### All the logs from the application
 
