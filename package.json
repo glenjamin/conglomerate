@@ -13,7 +13,7 @@
   "author": "Glen Mailer <glenjamin@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "amqp": "~0.1.7",
+    "amqp": "git://github.com/postwait/node-amqp.git#f06e8c58",
     "bunyan": "~0.21.4",
     "async": "~0.2.9",
     "express": "~3.4.0",

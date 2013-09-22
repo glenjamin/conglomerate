@@ -1,5 +1,6 @@
 var async = require('async');
 var util = require('util');
+var url = require('url');
 
 function getConfigValue(key) {
   key = key.replace('-', '_').toUpperCase();
@@ -14,20 +15,25 @@ function getConfigValue(key) {
 async.auto({
 
   'amqpLogger': function(next) {
+
+    var bunyanAmqp = require('./lib/bunyan-amqp');
+
     var logExchange = { name: 'logs', durable: true, autoDelete: false }
     function keyBuilder(log) {
-      return [log.name, log.type, log.levelName].join(".");
+      return [log.name, log.type, bunyanAmqp.levelToName[log.level]].join(".");
     }
-    next(null, require('./lib/bunyan-amqp')(null, logExchange, keyBuilder));
+    next(null, bunyanAmqp(null, logExchange, keyBuilder));
   },
 
   'log': ['amqpLogger', function(next, setup) {
-    var log = require('bunyan').createLogger({
+    bunyan = require('bunyan');
+    var log = bunyan.createLogger({
       name: "conglomerate",
       streams: [
         {level: 'debug', stream: process.stdout},
         {level: 'trace', type: 'raw', stream: setup.amqpLogger}
-      ]
+      ],
+      serializers : bunyan.stdSerializers
     });
     log.child({ type: 'logger' }).info("Initialised logger");
     next(null, log);
@@ -51,7 +57,12 @@ async.auto({
     }
     function serverStart() {
       var addr = server.address();
-      app.get('log').info("serving on http://%s:%s", addr.address, addr.port);
+      app.set('baseUrl', url.format({
+        protocol: 'http',
+        hostname: getConfigValue('hostname'),
+        port: addr.port
+      }))
+      app.get('log').info("serving on %s", app.get('baseUrl'));
       server.removeListener('error', listenError);
       next(null, server);
     }
@@ -106,9 +117,8 @@ async.auto({
   if (err) {
     if (setup.log) {
       setup.log.error(err, "Startup failed");
-    } else {
-      console.warn("Startup failed" + err);
     }
+    console.warn("Startup failed", err);
     process.exit(1);
   }
 
