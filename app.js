@@ -48,13 +48,9 @@ async.auto({
     var port = getConfigValue('port');
     var app = setup.express;
     var server = require('http').createServer(app);
-    server.once('error', listenError);
+    server.once('error', next);
     server.once('listening', serverStart);
     server.listen(port);
-    function listenError(err) {
-      server.removeListener('error', listenError);
-      next(err);
-    }
     function serverStart() {
       var addr = server.address();
       app.set('baseUrl', url.format({
@@ -63,7 +59,7 @@ async.auto({
         port: addr.port
       }))
       app.get('log').info("serving on %s", app.get('baseUrl'));
-      server.removeListener('error', listenError);
+      server.removeListener('error', next);
       next(null, server);
     }
   }],

@@ -31,7 +31,6 @@ Routing Keys: <app>.<type>.<level>
 TODO
 ----
 
-flatten conglomerate.js into app.js
 Dashboard view
 sublevels
 multilevel for remote inspection
