@@ -104,7 +104,7 @@ async.auto({
 
   'things': ['conglomerate', function(next, setup) {
     var con = setup.conglomerate;
-    var things = ['jobs'];
+    var things = ['jobs', 'chat'];
     async.forEach(things, con.addThing.bind(con), next);
   }]
 
