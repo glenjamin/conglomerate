@@ -64,6 +64,14 @@ async.auto({
     }
   }],
 
+  'socketio': ['http', function(next, setup) {
+    var app = setup.express;
+    var io = require('socket.io').listen(setup.http, {log: false});
+    app.set('io', io);
+    app.get('log').info("socket.io initialised");
+    next(null, io);
+  }],
+
   'amqp': ['amqpLogger', 'log', function(next, setup) {
     var log = setup.log.child({ type: 'amqp' });
     // TODO, wrap up into single function w/ callback
