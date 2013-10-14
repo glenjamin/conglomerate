@@ -126,6 +126,10 @@ async.auto({
     process.exit(1);
   }
 
+  setup.express.get('/', function(req, res) {
+    res.render('dashboard', {title: 'Dashboard'});
+  })
+
   setup.conglomerate.run();
 
   setup.amqp.on('error', function(err) {
