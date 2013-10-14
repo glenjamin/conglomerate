@@ -27,7 +27,8 @@ author of each conversion.
 
 All messages published to this exchange can be viewed on the `/chat` page.
 
-You are free to publish to this exchange, or create your own queues.
+You are free to publish to this exchange, or create your own queues to receive
+messages.
 
 ### All the logs from the application
 
