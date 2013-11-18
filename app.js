@@ -78,11 +78,10 @@ async.auto({
     var amqp = require('amqp');
     var url = getConfigValue('amqp-url');
     log.debug("Connecting to %s", url);
-    var conn = amqp.createConnection({ url: url });
+    var conn = amqp.createConnection({ url: url, reconnect: false });
     conn.on('error', connectionFailed)
     conn.on('ready', function() {
       log.info("AMQP connected");
-      conn.removeListener('error', connectionFailed);
       setup.amqpLogger.setConnection(conn);
       next(null, conn);
     });
