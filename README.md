@@ -36,11 +36,16 @@ messages.
 * Routing Keys: <app>.<type>.<level>
 * Format: see https://github.com/trentm/node-bunyan
 
+### Magic 8 Ball RPC
+
+* Exchange: 8ball
+* Routing Key: 8ball
+* Format: the message body is your question
+* Note: reply_to and correlation_id should be set
 
 TODO
 ----
 
-Dashboard view
 sublevels
 multilevel for remote inspection
 clean up old records from level

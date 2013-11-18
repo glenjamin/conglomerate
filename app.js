@@ -129,6 +129,14 @@ async.auto({
     res.render('dashboard', {title: 'Dashboard'});
   })
 
+  var public_amqp = getConfigValue('public-amqp');
+  setup.express.get('/start', function(req, res) {
+    res.render('start', {
+      title: 'Start',
+      amqp_url: public_amqp
+    });
+  })
+
   setup.conglomerate.run();
 
   setup.amqp.on('error', function(err) {
