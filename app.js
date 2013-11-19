@@ -125,12 +125,12 @@ async.auto({
     process.exit(1);
   }
 
-  setup.express.get('/', function(req, res) {
+  setup.express.get('/dash', function(req, res) {
     res.render('dashboard', {title: 'Dashboard'});
   })
 
   var public_amqp = getConfigValue('public-amqp');
-  setup.express.get('/start', function(req, res) {
+  setup.express.get('/', function(req, res) {
     res.render('start', {
       title: 'Start',
       amqp_url: public_amqp

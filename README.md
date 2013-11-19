@@ -6,7 +6,6 @@ A server to simulate a fictional company with a bunch of things going on.
 
 ### A job queue of markdown docs to convert to HTML
 
-* Exchange: jobs
 * Queue: documents.ready
 * Routing Key: documents.ready
 * Format `{ "destination": "<url>", "markdown": "<markdown>" }`
@@ -41,7 +40,10 @@ messages.
 * Exchange: 8ball
 * Routing Key: 8ball
 * Format: the message body is your question
-* Note: reply_to and correlation_id should be set
+
+As mentioned in the slides, you'll need to create a temporary queue for replies
+*before* publishing the request. The published message should include the
+replyTo and correlationId headers.
 
 TODO
 ----
