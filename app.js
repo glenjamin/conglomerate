@@ -64,12 +64,16 @@ async.auto({
     }
   }],
 
-  'socketio': ['http', function(next, setup) {
+  'primus': ['http', function(next, setup) {
     var app = setup.express;
-    var io = require('socket.io').listen(setup.http, {log: false});
-    app.set('io', io);
-    app.get('log').info("socket.io initialised");
-    next(null, io);
+    var Primus = require('primus');
+    var primus = new Primus(setup.http, {
+      parser: 'json', transformer: 'websockets'
+    });
+    primus.use('multiplex', require('primus-multiplex'));
+    app.set('primus', primus);
+    app.get('log').info("primus initialised");
+    next(null, primus);
   }],
 
   'amqp': ['amqpLogger', 'log', function(next, setup) {
