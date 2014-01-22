@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link rel="stylesheet" href="http://yandex.st/highlightjs/8.0/styles/github.min.css">
-    <script src="http://yandex.st/highlightjs/8.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="/css/hljs-github.min.css">
+    <script src="/js/hljs.min.js"></script>
     <script>
       hljs.configure({languages: ['ruby', 'javascript']});
       hljs.initHighlightingOnLoad();

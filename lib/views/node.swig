@@ -101,5 +101,5 @@ exchange.publish("body", :routing_key => "key")
 {% endblock %}
 
 {% block job-tips %}
-<p class="lead">TODO: HTML and markdown example code</p>
+<p class="alert alert-danger">TODO: HTML and markdown example code</p>
 {% endblock %}
