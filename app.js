@@ -136,10 +136,14 @@ async.auto({
   var language = getConfigValue('language');
   var public_amqp = getConfigValue('public-amqp');
   setup.express.get('/', function(req, res) {
-    res.render(language, {
-      title: 'Start',
-      amqp_url: public_amqp
-    });
+    res.render(language, { title: 'Start', amqp_url: public_amqp });
+  })
+
+  setup.express.get('/ruby', function(req, res) {
+    res.render('ruby', { title: 'Start with Ruby', amqp_url: public_amqp });
+  })
+  setup.express.get('/node', function(req, res) {
+    res.render('node', { title: 'Start with Node.js', amqp_url: public_amqp });
   })
 
   setup.conglomerate.run();

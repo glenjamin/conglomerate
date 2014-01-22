@@ -4,44 +4,48 @@
 <ul>
   <li>A text editor</li>
   <li>A terminal</li>
-  <li>Ruby 1.9+</li>
+  <li>Node.js 0.10+</li>
 </ul>
 <pre>
-gem install bunny
+npm install amqp
 </pre>
 {% endblock %}
 
 
 {% block connect %}
-<p>Save the following into <kbd>connect.rb</kbd></p>
+<p>Save the following into <kbd>connect.js</kbd></p>
 
 <pre>
-<code>require "rubygems"
-require "bunny"
+<code>var amqp = require('amqp');
 
-@bunny = Bunny.new '{{ amqp_url }}'
-@bunny.start
+module.exports = function(callback) {
+    var connection = amqp.createConnection(
+        { url: "{{ amqp_url }}" },
+        { reconnect: false }
+    );
+
+    connection.on('ready', callback.bind(null, connection));
+}
 </code></pre>
 
-<p>You can then <kbd>require</kbd> this file into any others you write.</p>
-
-<p>All communication with the server is done through a channel, you should
-use a different channel for each 'thing' you want to do with the server.
-to get a new channel use the following:</p>
+<p>You can then <kbd>require</kbd> this file into any others you write like so:</p>
 
 <pre>
-<code>channel = @bunny.channel
+<code>require('connect')(function(amqp) {
+    // amqp is now an active connection object
+})
 </code></pre>
 
-<p><a href="http://rubybunny.info/articles/connecting.html">More info</a></p>
+
+<p><a href="https://github.com/postwait/node-amqp#connection">More info</a></p>
 {% endblock %}
 
 
 {% block subscribing %}
-<p>A queue object can be obtained from a channel, declaring any options</p>
+<p>A queue object can be obtained from a connection, declaring any options</p>
 
 <pre>
-<code># pre-existing queue
+# pre-existing queue
 queue = channel.queue("queue-name", :no_declare => true)
 
 # Our own queue
@@ -49,15 +53,15 @@ queue = channel.queue("my-queue", :auto_delete => true)
 
 # Let the server generate a name
 queue = channel.queue("", :exclusive => true)
-</code></pre>
+</pre>
 
 <p>If we have created the queue ourselves, we need to bind the queue to the
 exchange to determine which messages we'll receive</p>
 
 <pre>
-<code>queue.bind("exchange-name", :routing_key => "key.#")
+queue.bind("exchange-name", :routing_key => "key.#")
 queue.bind(exchange_object, :routing_key => "exact.key")
-</code></pre>
+</pre>
 
 <p>Once we have a queue, we set the prefetch size to ensure we're not too
 greedy, and then <kbd>subscribe</kbd> to begin receiving messages.<br>
@@ -67,12 +71,12 @@ The <kbd>:ack</kbd> option tells the server we will be explicitly acknowledging
 messages.</p>
 
 <pre>
-<code>channel.prefetch 1
+channel.prefetch 1
 queue.subscribe(:block => true, :ack => true) do | info, metadata, body |
   # do some stuff
   channel.acknowledge(info.delivery_tag)
 end
-</code></pre>
+</pre>
 
 <p><a href="http://rubybunny.info/articles/queues.html">More info</a></p>
 {% endblock %}
@@ -83,7 +87,7 @@ end
 then we can publish messages to it.</p>
 
 <pre>
-<code># pre-existing exchange
+# pre-existing exchange
 exchange = channel.topic("name", :no_declare => true)
 
 # your own exchange
@@ -91,7 +95,7 @@ exchange = channel.topic("name", :durable => false)
 
 # and now publish
 exchange.publish("body", :routing_key => "key")
-</code></pre>
+</pre>
 
 <p><a href="http://http://rubybunny.info/articles/exchanges.html">More info</a></p>
 {% endblock %}
