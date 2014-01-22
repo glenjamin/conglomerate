@@ -1,4 +1,6 @@
-<% include ../head %>
+{% extends '../layout.swig' %}
+
+{% block content %}
 
 <style type="text/css">
 #template { display: none; }
@@ -20,15 +22,15 @@
       <td><a href="/jobs/"></td>
     </tr>
 
-    <% jobs.forEach(function(job) { %>
+    {% for job in jobs %}
 
       <tr>
-        <td><%= job.when.format("h:mm:ss.SSS") %></td>
-        <td><%= job.who %></td>
-        <td><a href="/jobs/<%= job.id %>"><%= job.id %></a></td>
+        <td>{{ job.when.format("h:mm:ss.SSS") }}</td>
+        <td>{{ job.who }}</td>
+        <td><a href="/jobs/{{ job.id }}">{{ job.id }}</a></td>
       </tr>
 
-    <% }) %>
+    {% endfor %}
   </tbody>
 </table>
 
@@ -36,8 +38,8 @@
 <script type="text/javascript">
 var jobTable = document.getElementById('jobs');
 var template = document.getElementById('template');
-var jobs = Primus.connect('<%= primus %>').channel('<%= channel %>');
-var maxRows = <%= max_jobs %> + 2;
+var jobs = Primus.connect('{{ primus }}').channel('{{ channel }}');
+var maxRows = {{ max_jobs }} + 2;
 jobs.on('data', function(msg) {
   var row = template.cloneNode(true);
   row.removeAttribute('id');
@@ -62,4 +64,4 @@ jobs.on('data', function(msg) {
 });
 </script>
 
-<% include ../foot %>
+{% endblock %}

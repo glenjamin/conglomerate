@@ -133,9 +133,10 @@ async.auto({
     res.render('dashboard', {title: 'Dashboard'});
   })
 
+  var language = getConfigValue('language');
   var public_amqp = getConfigValue('public-amqp');
   setup.express.get('/', function(req, res) {
-    res.render('start', {
+    res.render(language, {
       title: 'Start',
       amqp_url: public_amqp
     });

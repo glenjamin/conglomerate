@@ -1,5 +1,6 @@
-<% include ../head %>
+{% extends '../layout.swig' %}
 
+{% block content %}
 <style type="text/css">
 #template { display: none; }
 </style>
@@ -24,16 +25,16 @@
       <td></td>
     </td>
 
-    <% messages.forEach(function(message) { %>
+    {% for message in messages %}
 
       <tr>
-        <td><%= message.when.format("h:mm:ss.SSS") %></td>
-        <td><%= message.room %></td>
-        <td><%= message.name %></td>
-        <td><%= message.message %></td>
+        <td>{{ message.when.format("h:mm:ss.SSS") }}</td>
+        <td>{{ message.room }}</td>
+        <td>{{ message.name }}</td>
+        <td>{{ message.message }}</td>
       </tr>
 
-    <% }) %>
+    {% endfor %}
 
   </tbody>
 
@@ -43,8 +44,8 @@
 <script type="text/javascript">
 var messageTable = document.getElementById('messages');
 var template = document.getElementById('template');
-var chat = Primus.connect('<%= primus %>').channel('<%= channel %>');
-var maxRows = <%= max_messages %> + 2;
+var chat = Primus.connect('{{ primus }}').channel('{{ channel }}');
+var maxRows = {{ max_messages }} + 2;
 chat.on('data', function(msg) {
   var row = template.cloneNode(true);
   row.removeAttribute('id');
@@ -68,4 +69,4 @@ chat.on('data', function(msg) {
 });
 </script>
 
-<% include ../foot %>
+{% endblock %}

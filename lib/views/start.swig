@@ -1,4 +1,6 @@
-<% include head %>
+{% extends 'layout.swig' %}
+
+{% block content %}
 
 <h1>Getting Started</h1>
 
@@ -28,98 +30,23 @@
 
 <h3 id="requirements">Requirements</h3>
 
-<ul>
-  <li>A text editor</li>
-  <li>A terminal</li>
-  <li>Ruby 1.9+</li>
-</ul>
-<pre>
-gem install bunny
-</pre>
+{% block requirements %}{% endblock %}
 
 <h3 id="connect">Connecting to AMQP</h3>
 
-<p>Save the following into <kbd>connect.rb</kbd></p>
-
-<pre>
-require "rubygems"
-require "bunny"
-
-@bunny = Bunny.new '<%= amqp_url %>'
-@bunny.start
-</pre>
-
-<p>You can then <kbd>require</kbd> this file into any others you write.</p>
-
-<p>All communication with the server is done through a channel, you should
-use a different channel for each 'thing' you want to do with the server.
-to get a new channel use the following:</p>
-
-<pre>
-channel = @bunny.channel
-</pre>
-
-<p><a href="http://rubybunny.info/articles/connecting.html">More info</a></p>
+{% block connect %}{% endblock %}
 
 <h3 id="subscribing">Subscribing to a queue</h3>
 
-<p>A queue object can be obtained from a channel, declaring any options</p>
-
-<pre>
-# pre-existing queue
-queue = channel.queue("queue-name", :no_declare => true)
-
-# Our own queue
-queue = channel.queue("my-queue", :auto_delete => true)
-
-# Let the server generate a name
-queue = channel.queue("", :exclusive => true)
-</pre>
-
-<p>If we have created the queue ourselves, we need to bind the queue to the
-exchange to determine which messages we'll receive</p>
-
-<pre>
-queue.bind("exchange-name", :routing_key => "key.#")
-queue.bind(exchange_object, :routing_key => "exact.key")
-</pre>
-
-<p>Once we have a queue, we set the prefetch size to ensure we're not too
-greedy, and then <kbd>subscribe</kbd> to begin receiving messages.<br>
-The <kbd>:block</kbd> parameter stops us using multiple threads, which makes
-it easier to see the program flow in these examples.<br />
-The <kbd>:ack</kbd> option tells the server we will be explicitly acknowledging
-messages.</p>
-
-<pre>
-channel.prefetch 1
-queue.subscribe(:block => true, :ack => true) do | info, metadata, body |
-  # do some stuff
-  channel.acknowledge(info.delivery_tag)
-end
-</pre>
-
-<p><a href="http://rubybunny.info/articles/queues.html">More info</a></p>
+{% block subscribing %}{% endblock %}
 
 <h3 id="publishing">Publishing to an exchange</h3>
 
-<p>Similar to the queue example, we declare the exchange - of type "topic", and
-then we can publish messages to it.</p>
-
-<pre>
-# pre-existing exchange
-exchange = channel.topic("name", :no_declare => true)
-
-# your own exchange
-exchange = channel.topic("name", :durable => false)
-
-# and now publish
-exchange.publish("body", :routing_key => "key")
-</pre>
-
-<p><a href="http://http://rubybunny.info/articles/exchanges.html">More info</a></p>
+{% block publishing %}{% endblock %}
 
 <h2 id="exercises">Exercises</h2>
+
+<p>You can see yours and everyone else's progress on the <a href="dash">Dashboard</a>
 
 <h3 id="jobs">A job queue of markdown docs to convert to HTML</h3>
 
@@ -136,6 +63,8 @@ say who you are.</p>
 <p>The results of recently completed jobs can be seen at <a href="/jobs">/jobs</a>, including the
 author of each conversion.</p>
 
+{% block job-tips %}{% endblock %}
+
 <h3 id="chat">A simple chat exchange</h3>
 
 <ul>
@@ -148,7 +77,7 @@ author of each conversion.</p>
 <p>All messages published to this exchange can be viewed on the <a href="/chat">/chat</a> page.</p>
 
 <p>You are free to publish to this exchange, or create your own queues to receive
-messages.</p>
+messages. When creating your own queues, be sure to set exclusive and auto delete.</p>
 
 <h3 id="logs">All the logs from the application</h3>
 
@@ -157,6 +86,8 @@ messages.</p>
   <li>Routing Keys: &lt;app&gt;.&lt;type&gt;.&lt;level&gt;</li>
   <li>Format: see https://github.com/trentm/node-bunyan</li>
 </ul>
+
+<p>Try subscribing by binding on '#' initially, and then you can see what the routing keys look like before experimenting with different combinations of bindings</p>
 
 <h3 id="magic-8-ball-rpc">Magic 8 Ball RPC</h3>
 
@@ -187,4 +118,4 @@ data in these scenarios</p>
 <p>Feel free to experiment with the server, create queues or exchanges, publish
 or consume what you want. If you have any other ideas - try them out.</p>
 
-<% include foot %>
+{% endblock %}
