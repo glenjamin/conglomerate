@@ -28,7 +28,7 @@ module.exports = function(callback) {
 }
 </code></pre>
 
-<p>You can then <kbd>require</kbd> this file into any others you write like so:</p>
+<p>You can then <code>require</code> this file into any others you write like so:</p>
 
 <pre>
 <code>require('connect')(function(amqp) {
@@ -69,32 +69,32 @@ exchange to determine which messages we'll receive</p>
 
 <pre>
 <code>// we can either use the exchange name, or an Exchange object (see below)
-queue.bind("exchange-name", "key.#");
-queue.bind(exchange_object, "exact.key");
-
-// An event is triggered to confirm completion
-// There will be one event per binding
-queue.on('queueBindOk', function() {
-    // The queue is now bound
-})
+queue.bind("exchange-name", "key.#", callback);
+queue.bind(exchangeObject, "exact.key", callback);
 </code></pre>
 
-<p>Once we have a queue, we set the prefetch size to ensure we're not too
-greedy, and then <kbd>subscribe</kbd> to begin receiving messages.<br>
-The <kbd>:block</kbd> parameter stops us using multiple threads, which makes
-it easier to see the program flow in these examples.<br />
-The <kbd>:ack</kbd> option tells the server we will be explicitly acknowledging
-messages.</p>
+<p>If you do multiple calls to <code>bind</code>, only the last callback will be called, this
+is a bit of a quirk in the node-amqp implementation.</p>
+
+<p>Once we have a queue, we can <code>subscribe</code> to begin receiving messages.<br>
+The <code>ack</code> option tells the server we will be explicitly acknowleding messages.<br>
+the <code>prefetchCount</code> option tells the server how many messages to send
+us before waiting until we acknowledge one. It defaults to 1</p>
 
 <pre>
-channel.prefetch 1
-queue.subscribe(:block => true, :ack => true) do | info, metadata, body |
-  # do some stuff
-  channel.acknowledge(info.delivery_tag)
-end
-</pre>
+<code>queue.subscribe({ack: true, prefetchCount: 1}, onMessage);
+function onMessage(body, headers, deliveryInfo, message) {
+  // body is the message content
+  // headers includes things like contentType
+  // deliveryInfo includes things like routingKey
+  // message is an object represnting the above
 
-<p><a href="http://rubybunny.info/articles/queues.html">More info</a></p>
+  // do some stuff
+  message.acknowledge();
+}
+</code></pre>
+
+<p><a href="https://github.com/postwait/node-amqp/#queue">More info</a></p>
 {% endblock %}
 
 
@@ -103,17 +103,21 @@ end
 then we can publish messages to it.</p>
 
 <pre>
-# pre-existing exchange
-exchange = channel.topic("name", :no_declare => true)
+<code>// pre-existing exchange
+amqp.exchange("name", {type: "topic", noDeclare: true}, function(x) {
+  // x is now an Exchange object
+})
 
-# your own exchange
-exchange = channel.topic("name", :durable => false)
+// your own exchange
+amqp.exchange("name", {type: "topic", durable: false}, function(x) {
+  // x is now an Exchange object
+})
 
-# and now publish
-exchange.publish("body", :routing_key => "key")
+// and now to publish a message
+exchange.publish("key", "body", {contentType: "text/plain"})
 </pre>
 
-<p><a href="http://http://rubybunny.info/articles/exchanges.html">More info</a></p>
+<p><a href="https://github.com/postwait/node-amqp/#exchange">More info</a></p>
 {% endblock %}
 
 {% block job-tips %}
