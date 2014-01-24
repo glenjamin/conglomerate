@@ -42,26 +42,42 @@ module.exports = function(callback) {
 
 
 {% block subscribing %}
-<p>A queue object can be obtained from a connection, declaring any options</p>
+<p>A <code>Queue</code> object can be obtained from a connection, declaring any options</p>
 
 <pre>
-# pre-existing queue
-queue = channel.queue("queue-name", :no_declare => true)
+<code>// pre-existing queue
+amqp.queue("queue-name", {noDeclare: true}, function(q) {
+    // q is now a Queue object
+});
 
-# Our own queue
-queue = channel.queue("my-queue", :auto_delete => true)
+// Our own named queue
+// Use auto-delete so the server cleans up when we finish
+amqp.queue("my-queue", {autoDelete: true}, function(q) {
+    // q is now a Queue object
+});
 
-# Let the server generate a name
-queue = channel.queue("", :exclusive => true)
-</pre>
+// Use an empty string to let the server generate a name
+// Exclusive queues are also automatically cleaned up
+amqp.queue("", {exclusive: true}, function(q) {
+    // q is now a Queue object
+    // q.name contains the generated queue name
+})
+</code></pre>
 
 <p>If we have created the queue ourselves, we need to bind the queue to the
 exchange to determine which messages we'll receive</p>
 
 <pre>
-queue.bind("exchange-name", :routing_key => "key.#")
-queue.bind(exchange_object, :routing_key => "exact.key")
-</pre>
+<code>// we can either use the exchange name, or an Exchange object (see below)
+queue.bind("exchange-name", "key.#");
+queue.bind(exchange_object, "exact.key");
+
+// An event is triggered to confirm completion
+// There will be one event per binding
+queue.on('queueBindOk', function() {
+    // The queue is now bound
+})
+</code></pre>
 
 <p>Once we have a queue, we set the prefetch size to ensure we're not too
 greedy, and then <kbd>subscribe</kbd> to begin receiving messages.<br>
