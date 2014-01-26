@@ -48,11 +48,11 @@
 
 <p>You can see yours and everyone else's progress on the <a href="dash">Dashboard</a>
 
+<hr />
 <h3 id="jobs">A job queue of markdown docs to convert to HTML</h3>
 
 <ul>
   <li>Queue: documents.ready</li>
-  <li>Routing Key: documents.ready</li>
   <li>Format <code>{ "destination": "&lt;url&gt;", "markdown": "&lt;markdown&gt;" }</code></li>
 </ul>
 
@@ -65,6 +65,7 @@ author of each conversion.</p>
 
 {% block job-tips %}{% endblock %}
 
+<hr />
 <h3 id="chat">A simple chat exchange</h3>
 
 <ul>
@@ -76,9 +77,12 @@ author of each conversion.</p>
 
 <p>All messages published to this exchange can be viewed on the <a href="/chat">/chat</a> page.</p>
 
-<p>You are free to publish to this exchange, or create your own queues to receive
-messages. When creating your own queues, be sure to set exclusive and auto delete.</p>
+<p>Publish messages to the exchange, you'll see them appear on the dashboard</p>
 
+<p>Now try making your own queue and binding to the exchange to receive messages,
+be sure to set exclusive and auto delete.</p>
+
+<hr />
 <h3 id="logs">All the logs from the application</h3>
 
 <ul>
@@ -87,8 +91,10 @@ messages. When creating your own queues, be sure to set exclusive and auto delet
   <li>Format: see https://github.com/trentm/node-bunyan</li>
 </ul>
 
-<p>Try subscribing by binding on '#' initially, and then you can see what the routing keys look like before experimenting with different combinations of bindings</p>
+<p>Try subscribing by binding on <code>#</code> initially, and then you can see
+what the routing keys look like before experimenting with different combinations of bindings</p>
 
+<hr />
 <h3 id="magic-8-ball-rpc">Magic 8 Ball RPC</h3>
 
 <ul>
@@ -97,10 +103,18 @@ messages. When creating your own queues, be sure to set exclusive and auto delet
   <li>Format: the message body is your question</li>
 </ul>
 
-<p>As mentioned in the slides, you’ll need to create a temporary queue for replies
-<em>before</em> publishing the request. The published message should include the
-<kbd>replyTo</kbd> and <kbd>correlationId</kbd> headers.</p>
+<ol>
+  <li>Create a "reply" queue</li>
+  <li>Subscribe to the reply queue</li>
+  <li>Publish a message to the exchange where <code>replyTo: queue.name</code></li>
+  <li>Once completed, a message will be sent to the named queue</li>
+</ol>
 
+<p>Try sending more than one message at once, giving each one a different
+<code>correlationId</code> - this will be included in the reply messages, so you
+can match it up to your request.</p>
+
+<hr />
 <h2 id="extra">Extra Credit</h2>
 
 <p>Here are a few suggestions for other things you could implement using the same
@@ -108,11 +122,9 @@ data in these scenarios</p>
 
 <ul>
   <li>Try processing multiple jobs at the same time</li>
-  <li>Try creating temporary queues on the chat exchange that are only bound to
-  a single room</li>
+  <li>Try formatting the messages from the chat exchange like a chat room</li>
   <li>Try different variations and combinations of bindings for the log exchange</li>
   <li>Experiment with different ways of displaying the information from the log exchange</li>
-  <li>Try making multiple 8 ball requests in parallel, and correlating them back together after the replies come back</li>
 </ul>
 
 <p>Feel free to experiment with the server, create queues or exchanges, publish

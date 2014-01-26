@@ -115,11 +115,35 @@ amqp.exchange("name", {type: "topic", durable: false}, function(x) {
 
 // and now to publish a message
 exchange.publish("key", "body", {contentType: "text/plain"})
-</pre>
+</code></pre>
 
 <p><a href="https://github.com/postwait/node-amqp/#exchange">More info</a></p>
 {% endblock %}
 
 {% block job-tips %}
-<p class="alert alert-danger">TODO: HTML and markdown example code</p>
+<h4>Making HTTP POST Requests</h3>
+<p>I recommend using the <a href="http://npm.im/request">request</a> module to
+handle this, here's an example:</p>
+<pre>
+<code>var request = require('request');
+request.post(
+  {
+    url: "http://whatever",
+    body: "the body",
+    headers: {"Author": "changeme"}
+  },
+  onResponse
+)
+function onResponse(err, response, body) {
+  // handle response here
+}
+</code></pre>
+
+<h4>Converting to Markdown</h4>
+<p>I recommend using the <a href="http://npm.im/markdown">markdown</a> module to
+handle this, here's an example:</p>
+<pre>
+<code>var markdown = require('markdown');
+var html = markdown.toHTML("# Some Markdown");
+</code></pre>
 {% endblock %}
