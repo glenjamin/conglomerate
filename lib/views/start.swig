@@ -92,7 +92,8 @@ be sure to set exclusive and auto delete.</p>
 </ul>
 
 <p>Try subscribing by binding on <code>#</code> initially, and then you can see
-what the routing keys look like before experimenting with different combinations of bindings</p>
+what the routing keys look like before experimenting with different combinations
+of bindings</p>
 
 <hr />
 <h3 id="magic-8-ball-rpc">Magic 8 Ball RPC</h3>
@@ -109,6 +110,12 @@ what the routing keys look like before experimenting with different combinations
   <li>Publish a message to the exchange where <code>replyTo: queue.name</code></li>
   <li>Once completed, a message will be sent to the named queue</li>
 </ol>
+
+<p>All queues are automatically bound to the default exchange using their queue
+name as the routing key. The replyTo header informs the server that we want to
+receive replies on the defaultExchange with that key. If you let the server
+generate a queue name, you can be sure not to conflict with anyone else's
+queues.</p>
 
 <p>Try sending more than one message at once, giving each one a different
 <code>correlationId</code> - this will be included in the reply messages, so you
