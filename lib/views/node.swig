@@ -31,7 +31,7 @@ module.exports = function(callback) {
 <p>You can then <code>require</code> this file into any others you write like so:</p>
 
 <pre>
-<code>require('connect')(function(amqp) {
+<code>require('./connect')(function(amqp) {
     // amqp is now an active connection object
 })
 </code></pre>
