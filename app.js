@@ -55,9 +55,9 @@ async.auto({
       var addr = server.address();
       app.set('baseUrl', url.format({
         protocol: 'http',
-        hostname: getConfigValue('hostname'),
-        port: addr.port
+        host: getConfigValue('host')
       }))
+      app.get('log').info("listening on %s:%d", addr.address, addr.port);
       app.get('log').info("serving on %s", app.get('baseUrl'));
       server.removeListener('error', next);
       next(null, server);
